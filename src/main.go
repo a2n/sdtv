@@ -7,19 +7,20 @@ import (
     "regexp"
     "log"
     "html"
-    "sdtv"
+    //"sdtv"
 )
 
 func main() {
     path := "../data/News_detail.html"
     str, err := ioutil.ReadFile(path)
-    if err != nil {
-	log.Fatal("Can not open file %s", path)
-    }
+    cherr(err)
 
-    detail := sdtv.Detail{}
-    d := detail.Parse([]byte(str))
-    fmt.Printf("Title: %s\nDescription: %s\nDate: %s\nWMV: %s\n", d.Title, d.Description, d.Date, d.WMV)
+    ic, err := iconv.Open("UTF-8", "BIG-5")
+    defer ic.Close()
+
+    newstr, err := ic.Conv(string(str))
+    cherr(err)
+    fmt.Printf("new: %s\n", newstr)
 }
 
 func foo() {
@@ -47,4 +48,10 @@ func getContentWithURL(url string) (string){
     defer resp.Body.Close()
     bytes, err := ioutil.ReadAll(resp.Body)
     return string(bytes)
+}
+
+func cherr(err error) {
+    if err != nil {
+	panic(err)
+    }
 }
